@@ -19,15 +19,21 @@ describe('Service: Hotkeys', () => {
   });
 
   it('should remove shortcut', () => {
-    spectator.service.addShortcut({ keys: 'meta.a' });
-    spectator.service.addShortcut({ keys: 'meta.b' });
-    spectator.service.addShortcut({ keys: 'meta.c' });
+    spectator.service.addShortcut({ keys: 'meta.a' }).subscribe();
+    spectator.service.addShortcut({ keys: 'meta.b' }).subscribe();
+    spectator.service.addShortcut({ keys: 'meta.c' }).subscribe();
     spectator.service.removeShortcuts(['meta.a', 'meta.b']);
     spectator.service.removeShortcuts('meta.c');
     expect(spectator.service.getHotkeys().length).toBe(0);
     const spy = spyOn(console, 'warn');
     spectator.service.removeShortcuts('meta.c');
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('should unsubscribe shortcuts when removed', () => {
+    const subscription = spectator.service.addShortcut({ keys: 'meta.a' }).subscribe();
+    spectator.service.removeShortcuts('meta.a');
+    expect(subscription.closed).toEqual(true);
   });
 
   it('should listen to keydown', () => {

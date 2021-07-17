@@ -105,6 +105,7 @@ export class HotkeysService {
 
       return () => {
         this.hotkeys.delete(normalizedKeys);
+        this.disposers.delete(normalizedKeys);
         dispose();
       };
     }).pipe(takeUntil<KeyboardEvent>(disposer));
@@ -117,6 +118,7 @@ export class HotkeysService {
         console.warn(`Hotkey ${hotkey} not found`);
         return;
       }
+      this.hotkeys.delete(hotkey);
       const disposer = this.disposers.get(hotkey);
       disposer.next();
       this.disposers.delete(hotkey);
